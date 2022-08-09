@@ -4,7 +4,8 @@ const router = express.Router();
 import { currentUser } from './../middlewares/current-user';
 
 router.get('/api/users/currentuser', currentUser, (req, res) => {
-  res.send({ currentUser: req.currentUser || null });
+  const currentUser = req.currentUser || null;
+  res.send({ currentUser });
 });
 
 export { router as currentUserRouter };
