@@ -3,19 +3,20 @@ import { app } from './app';
 
 const startServer = async () => {
   if (!process.env.JWT_KEY) {
-    throw new Error('JWT_KEY must be define');
+    throw new Error('JWT_KEY must be defined');
   }
   if (!process.env.MONGO_URI) {
     throw new Error('MONGO_URI must be defined');
   }
+
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('auth connected to its database');
+    console.log('tickets connected to its database');
   } catch (err) {
     console.log('error', err);
   }
-  app.listen(4000, () => {
-    console.log('Auth listens on port 4000!');
+  app.listen(5000, () => {
+    console.log('tickets listens on port 5000!');
   });
 };
 
