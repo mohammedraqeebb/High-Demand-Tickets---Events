@@ -35,12 +35,12 @@ const startServer = async () => {
     process.on('SIGTERM', () => natsWrapper.client.close());
 
     await mongoose.connect(process.env.MONGO_URI);
-    console.log('tickets connected to its database');
+    console.log('orders connected to its database');
   } catch (err) {
     console.log('error', err);
   }
   app.listen(5000, () => {
-    console.log('tickets listens on port 5000!');
+    console.log('orders listens on port 5000!');
   });
 };
 
