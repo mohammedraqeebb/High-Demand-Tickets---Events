@@ -1,6 +1,7 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
 import { OrderStatus } from '@high-demand-ticket/common';
 import { TicketDoc } from './ticket';
+import { updateIfCurrentPlugin } from 'mongoose-update-if-current';
 
 interface OrderAtrrs {
   userId: string;
@@ -14,6 +15,7 @@ interface OrderDoc extends Document {
   status: string;
   expiresAt: Date;
   ticket: TicketDoc;
+  version: number;
 }
 
 interface OrderModel extends Model<OrderDoc> {
@@ -44,11 +46,13 @@ const orderSchema = new Schema(
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
-        delete ret.id;
+        delete ret._id;
       },
     },
   }
 );
+orderSchema.set('versionKey', 'version');
+orderSchema.plugin(updateIfCurrentPlugin);
 
 orderSchema.statics.build = (attrs: OrderAtrrs) => {
   return new Order(attrs);

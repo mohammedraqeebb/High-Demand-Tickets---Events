@@ -5,6 +5,7 @@ import {
   NotAuthorizedError,
 } from '@high-demand-ticket/common';
 import { Order } from '../models/order';
+
 const router = express.Router();
 
 router.get(
@@ -16,10 +17,10 @@ router.get(
     if (!order) {
       throw new NotFoundError();
     }
-
     if (order.userId !== req.currentUser!.id) {
       throw new NotAuthorizedError();
     }
+
     res.send(order);
   }
 );

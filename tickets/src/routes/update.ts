@@ -4,6 +4,8 @@ import {
   NotAuthorizedError,
   NotFoundError,
   validateRequest,
+  requireAuth,
+  BadRequestError,
 } from '@high-demand-ticket/common';
 import { body } from 'express-validator';
 
@@ -14,6 +16,7 @@ const router = express.Router();
 
 router.put(
   '/api/tickets/:id',
+  requireAuth,
   [
     body('title').not().isEmpty().withMessage('title is required'),
     body('price')
@@ -21,11 +24,16 @@ router.put(
       .withMessage('price must be greater than zero'),
   ],
   validateRequest,
+
   async (req: Request, res: Response) => {
     const ticket = await Ticket.findById(req.params.id);
 
     if (!ticket) {
       throw new NotFoundError();
+    }
+
+    if (ticket.orderId) {
+      throw new BadRequestError('Ticket cannot be edited as it is reserved');
     }
 
     if (ticket.userId !== req.currentUser!.id) {
@@ -42,6 +50,7 @@ router.put(
     new TicketUpdatedPublisher(natsWrapper.client).publish({
       id: ticket.id,
       title: ticket.title,
+      version: ticket.version,
       price: ticket.price,
       userId: ticket.userId,
     });

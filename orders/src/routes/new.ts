@@ -19,11 +19,13 @@ const EXPIRATION_WINDOW_SECONDS = 15 * 60;
 router.post(
   '/api/orders',
   requireAuth,
-  body('ticketId')
-    .not()
-    .isEmpty()
-    .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
-    .withMessage('Ticket id must be provided'),
+  [
+    body('ticketId')
+      .not()
+      .isEmpty()
+      .custom((input: string) => mongoose.Types.ObjectId.isValid(input))
+      .withMessage('Ticket id must be provided'),
+  ],
   validateRequest,
   async (req: Request, res: Response) => {
     const { ticketId } = req.body;
@@ -55,6 +57,7 @@ router.post(
       id: order.id,
       status: OrderStatus.Created,
       userId: order.userId,
+      version: order.version,
       expiresAt: order.expiresAt.toISOString(),
       ticket: {
         id: ticket.id,

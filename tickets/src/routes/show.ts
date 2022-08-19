@@ -1,13 +1,13 @@
-import { BadRequestError } from '@high-demand-ticket/common';
+import { NotFoundError } from '@high-demand-ticket/common';
 import express, { Request, Response } from 'express';
 import { Ticket } from '../models/ticket';
 
 const router = express.Router();
 
-router.get('/api/ticket/:id', async (req: Request, res: Response) => {
+router.get('/api/tickets/:id', async (req: Request, res: Response) => {
   const ticket = await Ticket.findById(req.params.id);
   if (!ticket) {
-    throw new BadRequestError('ticket does not exist');
+    throw new NotFoundError();
   }
 
   res.status(200).send(ticket);
